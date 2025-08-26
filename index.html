@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comunicación Paciente</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: linear-gradient(45deg, #4CAF50, #45a049);
+            border-radius: 15px;
+            color: white;
+        }
+
+        .header h1 {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+
+        .categories {
+            margin-bottom: 20px;
+        }
+
+        .category {
+            margin-bottom: 25px;
+        }
+
+        .category-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 15px;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .buttons-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .comm-button {
+            padding: 20px;
+            font-size: 16px;
+            font-weight: bold;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            min-height: 80px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .comm-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+        }
+
+        .comm-button:active {
+            transform: translateY(0);
+        }
+
+        .emergency {
+            background: linear-gradient(45deg, #ff4757, #ff3838);
+            color: white;
+        }
+
+        .basic-need {
+            background: linear-gradient(45deg, #3742fa, #2f3542);
+            color: white;
+        }
+
+        .comfort {
+            background: linear-gradient(45deg, #2ed573, #1e90ff);
+            color: white;
+        }
+
+        .pain {
+            background: linear-gradient(45deg, #ffa726, #ff7043);
+            color: white;
+        }
+
+        .emotion {
+            background: linear-gradient(45deg, #ff9a9e, #fecfef);
+            color: #333;
+        }
+
+        .communication {
+            background: linear-gradient(45deg, #9c88ff, #8c7ae6);
+            color: white;
+        }
+
+        .icon {
+            font-size: 24px;
+        }
+
+        .pain-scale {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .pain-number {
+            padding: 15px;
+            background: linear-gradient(45deg, #ffa726, #ff7043);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .pain-number:hover {
+            transform: scale(1.1);
+            box-shadow: 0 4px 15px rgba(255, 167, 38, 0.4);
+        }
+
+        .message-display {
+            background: #e8f5e8;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+            font-size: 18px;
+            text-align: center;
+            border-left: 5px solid #4CAF50;
+            min-height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .clear-button {
+            background: #ff6b6b;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            font-size: 14px;
+            cursor: pointer;
+            margin-left: 10px;
+            transition: background 0.3s ease;
+        }
+
+        .clear-button:hover {
+            background: #ff5252;
+        }
+
+        .speak-button {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            font-size: 16px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 10px;
+            transition: background 0.3s ease;
+        }
+
+        .speak-button:hover {
+            background: #45a049;
+        }
+
+        .language-selector {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .language-selector select {
+            padding: 12px 20px;
+            font-size: 16px;
+            border: 2px solid #667eea;
+            border-radius: 10px;
+            background: white;
+            color: #333;
+            cursor: pointer;
+            outline: none;
+            min-width: 200px;
+        }
+
+        .language-selector select:focus {
+            border-color: #4CAF50;
+            box-shadow: 0 0 10px rgba(76, 175, 80, 0.3);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Selector de idioma -->
+        <div class="language-selector">
+            <select id="languageSelect" onchange="changeLanguage()">
+                <option value="es">🇦🇷 Español</option>
+                <option value="en">🇺🇸 English</option>
+                <option value="pt">🇧🇷 Português</option>
+                <option value="it">🇮🇹 Italiano</option>
+                <option value="fr">🇫🇷 Français</option>
+                <option value="de">🇩🇪 Deutsch</option>
+                <option value="zh">🇨🇳 中文</option>
+                <option value="ar">🇸🇦 العربية</option>
+                <option value="ru">🇷🇺 Русский</option>
+                <option value="ko">🇰🇷 한국어</option>
+            </select>
+        </div>
+
+        <div class="header">
+            <h1 id="mainTitle">💬 Comunicación</h1>
+            <p id="subtitle">Toca los botones para comunicarte</p>
+        </div>
+
+        <div class="message-display" id="messageDisplay">
+            Selecciona lo que necesitas comunicar
+        </div>
+
+        <button class="speak-button" onclick="speakMessage()">🔊 <span id="speakText">Reproducir mensaje</span></button>
+        <button class="clear-button" onclick="clearMessage()">🗑️ <span id="clearText">Borrar</span></button>
+
+        <div class="categories">
+            <!-- Emergencias -->
+            <div class="category">
+                <div class="category-title" id="urgentTitle">🚨 URGENTE</div>
+                <div class="buttons-grid">
+                    <button class="comm-button emergency" onclick="speakTranslatedMessage('emergency_help')">
+                        <span class="icon">🚨</span>
+                        <span id="emergencyBtn">EMERGENCIA</span>
+                    </button>
+                    <button class="comm-button emergency" onclick="speakTranslatedMessage('cant_breathe')">
+                        <span class="icon">😰</span>
+                        <span id="breatheBtn">NO RESPIRO</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Dolor -->
+            <div class="category">
+                <div class="category-title" id="painTitle">😣 DOLOR</div>
+                <div class="buttons-grid">
+                    <button class="comm-button pain" onclick="speakTranslatedMessage('have_pain')">
+                        <span class="icon">😣</span>
+                        <span id="painBtn">TENGO DOLOR</span>
+                    </button>
+                    <button class="comm-button pain" onclick="speakTranslatedMessage('severe_pain')">
+                        <span class="icon">😫</span>
+                        <span id="severePainBtn">DOLOR FUERTE</span>
+                    </button>
+                </div>
+                <div class="pain-scale" id="painScale">
+                    <button class="pain-number" onclick="speakTranslatedMessage('pain_level', '1')">1</button>
+                    <button class="pain-number" onclick="speakTranslatedMessage('pain_level', '2')">2</button>
+                    <button class="pain-number" onclick="speakTranslatedMessage('pain_level', '3')">3</button>
+                    <button class="pain-number" onclick="speakTranslatedMessage('pain_level', '4')">4</button>
+                    <button class="pain-number" onclick="speakTranslatedMessage('pain_level', '5')">5</button>
+                    <button class="pain-number" onclick="speakTranslatedMessage('pain_level', '6')">6</button>
+                    <button class="pain-number" onclick="speakTranslatedMessage('pain_level', '7')">7</button>
+                    <button class="pain-number" onclick="speakTranslatedMessage('pain_level', '8')">8</button>
+                    <button class="pain-number" onclick="speakTranslatedMessage('pain_level', '9')">9</button>
+                    <button class="pain-number" onclick="speakTranslatedMessage('pain_level', '10')">10</button>
+                </div>
+            </div>
+
+            <!-- Necesidades básicas -->
+            <div class="category">
+                <div class="category-title" id="basicTitle">🏥 NECESIDADES BÁSICAS</div>
+                <div class="buttons-grid">
+                    <button class="comm-button basic-need" onclick="speakTranslatedMessage('need_bathroom')">
+                        <span class="icon">🚻</span>
+                        <span id="bathroomBtn">IR AL BAÑO</span>
+                    </button>
+                    <button class="comm-button basic-need" onclick="speakTranslatedMessage('need_water')">
+                        <span class="icon">💧</span>
+                        <span id="waterBtn">TENGO SED</span>
+                    </button>
+                    <button class="comm-button basic-need" onclick="speakTranslatedMessage('need_food')">
+                        <span class="icon">🍽️</span>
+                        <span id="foodBtn">TENGO HAMBRE</span>
+                    </button>
+                    <button class="comm-button basic-need" onclick="speakTranslatedMessage('need_medicine')">
+                        <span class="icon">💊</span>
+                        <span id="medicineBtn">MEDICINA</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Comodidad -->
+            <div class="category">
+                <div class="category-title" id="comfortTitle">😌 COMODIDAD</div>
+                <div class="buttons-grid">
+                    <button class="comm-button comfort" onclick="speakTranslatedMessage('feel_cold')">
+                        <span class="icon">🥶</span>
+                        <span id="coldBtn">TENGO FRÍO</span>
+                    </button>
+                    <button class="comm-button comfort" onclick="speakTranslatedMessage('feel_hot')">
+                        <span class="icon">🥵</span>
+                        <span id="hotBtn">TENGO CALOR</span>
+                    </button>
+                    <button class="comm-button comfort" onclick="speakTranslatedMessage('change_position')">
+                        <span class="icon">🔄</span>
+                        <span id="positionBtn">CAMBIAR POSICIÓN</span>
+                    </button>
+                    <button class="comm-button comfort" onclick="speakTranslatedMessage('need_pillow')">
+                        <span class="icon">🛏️</span>
+                        <span id="pillowBtn">ALMOHADA</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Emociones -->
+            <div class="category">
+                <div class="category-title" id="emotionsTitle">💭 EMOCIONES</div>
+                <div class="buttons-grid">
+                    <button class="comm-button emotion" onclick="speakTranslatedMessage('feel_scared')">
+                        <span class="icon">😨</span>
+                        <span id="scaredBtn">TENGO MIEDO</span>
+                    </button>
+                    <button class="comm-button emotion" onclick="speakTranslatedMessage('feel_anxious')">
+                        <span class="icon">😰</span>
+                        <span id="anxiousBtn">TENGO ANSIEDAD</span>
+                    </button>
+                    <button class="comm-button emotion" onclick="speakTranslatedMessage('feel_sad')">
+                        <span class="icon">😢</span>
+                        <span id="sadBtn">ESTOY TRISTE</span>
+                    </button>
+                    <button class="comm-button emotion" onclick="speakTranslatedMessage('feel_happy')">
+                        <span class="icon">😊</span>
+                        <span id="happyBtn">ESTOY FELIZ</span>
+                    </button>
+                    <button class="comm-button emotion" onclick="speakTranslatedMessage('feel_confused')">
+                        <span class="icon">😕</span>
+                        <span id="confusedBtn">ESTOY CONFUNDIDO</span>
+                    </button>
+                    <button class="comm-button emotion" onclick="speakTranslatedMessage('feel_frustrated')">
+                        <span class="icon">😤</span>
+                        <span id="frustratedBtn">ESTOY FRUSTRADO</span>
+                    </button>
+                    <button class="comm-button emotion" onclick="speakTranslatedMessage('feel_calm')">
+                        <span class="icon">😌</span>
+                        <span id="calmBtn">ME SIENTO TRANQUILO</span>
+                    </button>
+                    <button class="comm-button emotion" onclick="speakTranslatedMessage('feel_lonely')">
+                        <span class="icon">😔</span>
+                        <span id="lonelyBtn">ME SIENTO SOLO</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Comunicación -->
+            <div class="category">
+                <div class="category-title" id="staffTitle">👨‍⚕️ PERSONAL MÉDICO</div>
+                <div class="buttons-grid">
+                    <button class="comm-button communication" onclick="speakTranslatedMessage('call_nurse')">
+                        <span class="icon">👩‍⚕️</span>
+                        <span id="nurseBtn">LLAMEN ENFERMERA</span>
+                    </button>
+                    <button class="comm-button communication" onclick="speakTranslatedMessage('need_doctor')">
+                        <span class="icon">👨‍⚕️</span>
+                        <span id="doctorBtn">QUIERO AL DOCTOR</span>
+                    </button>
+                    <button class="comm-button communication" onclick="speakTranslatedMessage('call_family')">
+                        <span class="icon">📞</span>
+                        <span id="familyBtn">LLAMAR FAMILIA</span>
+                    </button>
+                    <button class="comm-button communication" onclick="speakTranslatedMessage('thank_you')">
+                        <span class="icon">🙏</span>
+                        <span id="thanksBtn">GRACIAS</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="instructions" id="instructions">
+            💡 <strong id="instructionsTitle">Instrucciones:</strong> <span id="instructionsText">Toca cualquier botón para seleccionar tu mensaje. Luego presiona "Reproducir mensaje" para que se escuche en voz alta.</span>
+        </div>
+    </div>
+
+    <script>
+        let currentMessage = '';
+
+        function setMessage(message) {
+            currentMessage = message;
+            document.getElementById('messageDisplay').textContent = message;
+            
+            // Vibración si está disponible
+            if ('vibrate' in navigator) {
+                navigator.vibrate(50);
+            }
+            
+            // Feedback visual
+            const display = document.getElementById('messageDisplay');
+            display.style.background = '#d4edda';
+            display.style.borderColor = '#28a745';
+            
+            setTimeout(() => {
+                display.style.background = '#e8f5e8';
+                display.style.borderColor = '#4CAF50';
+            }, 300);
+        }
+
+        function clearMessage() {
+            currentMessage = '';
+            document.getElementById('messageDisplay').textContent = 'Selecciona lo que necesitas comunicar';
+            
+            if ('vibrate' in navigator) {
+                navigator.vibrate(25);
+            }
+        }
+
+        function speakMessage() {
+            if (currentMessage === '') {
+                alert('Primero selecciona un mensaje');
+                return;
+            }
+
+            // Text-to-Speech
+            if ('speechSynthesis' in window) {
+                const utterance = new SpeechSynthesisUtterance(currentMessage);
+                utterance.lang = 'es-ES';
+                utterance.rate = 0.8;
+                utterance.volume = 1;
+                speechSynthesis.speak(utterance);
+                
+                // Feedback visual durante la reproducción
+                const button = event.target;
+                const originalText = button.textContent;
+                button.textContent = '🔊 Reproduciendo...';
+                button.style.background = '#45a049';
+                
+                utterance.onend = function() {
+                    button.textContent = originalText;
+                    button.style.background = '#4CAF50';
+                };
+            } else {
+                alert('Tu dispositivo no soporta text-to-speech. El mensaje es: ' + currentMessage);
+            }
+
+            if ('vibrate' in navigator) {
+                navigator.vibrate(100);
+            }
+        }
+
+        // Hacer la app responsiva y accesible
+        document.addEventListener('DOMContentLoaded', function() {
+            // Aumentar el tamaño de fuente en dispositivos pequeños
+            if (window.innerWidth < 400) {
+                document.body.style.fontSize = '14px';
+            }
+            
+            // Soporte para navegación por teclado
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    if (document.activeElement.classList.contains('comm-button')) {
+                        document.activeElement.click();
+                    }
+                }
+            });
+        });
+
+        // Prevenir zoom accidental en iOS
+        document.addEventListener('touchstart', function(e) {
+            if (e.touches.length > 1) {
+                e.preventDefault();
+            }
+        });
+
+        // Mantener la pantalla activa
+        if ('wakeLock' in navigator) {
+            navigator.wakeLock.request('screen').catch(err => {
+                console.log('Wake lock no disponible:', err);
+            });
+        }
+    </script>
+</body>
+</html>
